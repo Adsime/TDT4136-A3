@@ -1,9 +1,11 @@
-import project.board as board
+from project.board import Board
 import time
+from project.astar import AStar
 
 
-o = board.Board("../boards/board-1-3.txt")
+board = Board("../boards/board-1-3.txt")
+engine = AStar(board)
 while True:
-    #o.loop()
-    o.window.update()
-    time.sleep(1 / 60)
+    engine.update()
+    board.window.update()
+    time.sleep(0.2)
