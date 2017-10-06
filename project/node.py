@@ -16,7 +16,7 @@ class Node(Canvas):
     # Globally unique fields
     HEIGHT = 30
     WIDTH = 30
-    COLORS = {"A": SymbolValues("red", 0), "B": SymbolValues("gold", 0), '.': SymbolValues("white", 0),
+    COLORS = {"A": SymbolValues("dark orange", 0), "B": SymbolValues("gold", 0), '.': SymbolValues("white", 0),
               "#": SymbolValues("black", 0), "w": SymbolValues("blue", 100), "m": SymbolValues("gray", 50),
               "f": SymbolValues("dark green", 10), "g": SymbolValues("light green", 5), "r": SymbolValues("brown", 1)}
 

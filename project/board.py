@@ -60,6 +60,7 @@ class Board:
                     action = child.open(node, self.goal_node)
                     if action == 2:
                         self.open_neighbours(child, engine)
+                        return
                     if action == 1:
                         if child.isGoal:
                             engine.finish(child)

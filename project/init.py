@@ -3,7 +3,7 @@ import time
 from project.astar import AStar
 
 # Field init
-board = Board("../boards/board-2-3.txt")
+board = Board("../boards/board-2-1.txt")
 engine = AStar(board)
 
 """
@@ -13,4 +13,4 @@ Refresh rate can be edited in the time.sleep method.
 while True:
     engine.update()
     board.window.update()
-    time.sleep(0.03)
+    time.sleep(0.01)
