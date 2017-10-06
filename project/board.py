@@ -21,7 +21,7 @@ class Board:
         self.calculate_dim()
         self.goal_node = None
         self.start_node = None
-        self.board = [[None] * self.cols for i in range(self.cols)]
+        self.board = [[None] * self.cols for i in range(self.rows)]
         self.init_board()
         self.init_heuristic()
 
@@ -42,7 +42,7 @@ class Board:
             for x, symbol in enumerate(line):
                 if symbol == "\n":
                     continue
-                node = Node(self.window, self.SYMBOL_MAP.get(symbol), self.DIM, self.DIM, 0, x, y)
+                node = Node(self.window, self.SYMBOL_MAP.get(symbol), self.DIM, self.DIM, 0, x, y, symbol)
                 self.check_for_special(symbol, node)
                 self.board[y][x] = node
 
@@ -66,29 +66,10 @@ class Board:
                         continue
                     node.set_heuristic(self.goal_node)
 
-    def loop(self):
-        x = randint(0, self.cols-1)
-        y = randint(0, self.rows-1)
-        c = self.COLORS[randint(0, len(self.COLORS))-1]
-        o = self.board[y][x]
-        if isinstance(o, Canvas):
-            o.config(bg=c)
-
     def open_neighbours(self, node, engine):
         if isinstance(node, Node):
             nodes = []
-            if 0 <= node.y + 1 < self.rows:
-                nodes.append(self.board[node.y + 1][node.x])
-
-            if 0 <= node.x + 1 < self.cols:
-                nodes.append(self.board[node.y][node.x + 1])
-
-            if 0 <= node.y - 1 < self.rows:
-                nodes.append(self.board[node.y - 1][node.x])
-
-            if 0 <= node.x - 1 < self.cols:
-                nodes.append(self.board[node.y][node.x-1])
-
+            self.check_neighbours(node, nodes)
             for child in nodes:
                 if child and isinstance(child, Node):
                     if child.open(node):
@@ -97,7 +78,21 @@ class Board:
                             return
                         engine.open.append(child)
 
+    def check_neighbours(self, node, nodes):
+        if 0 <= node.y + 1 < self.rows:
+            nodes.append(self.board[node.y + 1][node.x])
 
+        if 0 <= node.x + 1 < self.cols:
+            nodes.append(self.board[node.y][node.x + 1])
 
+        if 0 <= node.y - 1 < self.rows:
+            nodes.append(self.board[node.y - 1][node.x])
 
+        if 0 <= node.x - 1 < self.cols:
+            nodes.append(self.board[node.y][node.x - 1])
 
+    def reset(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                n = self.board[i][j]
+                n.reset()

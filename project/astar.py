@@ -17,8 +17,9 @@ class AStar:
         node = self.open.pop()
         if isinstance(node, Node):
             self.board.open_neighbours(node, self)
-            self.open.sort(key=lambda n: n.heuristic, reverse=True)
+            self.open.sort(key=lambda n: n.F, reverse=True)
 
     def finish(self, node):
+        self.board.reset()
         node.backtrack()
         self.finished = True
