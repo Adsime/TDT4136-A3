@@ -6,7 +6,11 @@ from random import randint
 class Board:
 
     def __init__(self, file_name):
-
+        """
+        Constructor. Sets the initial values of the board class.
+        Will also load a given file and make a matrix based on the contents.
+        :param file_name: str
+        """
         # Field init
         self.lines = None
         self.goal_node = None
@@ -25,6 +29,10 @@ class Board:
         self.init_board()
 
     def read_file(self, file_name):
+        """
+        Helper method to read a file and get its contents in an array.
+        :param file_name: str
+        """
         self.lines = open(file_name).readlines()
 
     def calculate_dim(self):
@@ -79,9 +87,3 @@ class Board:
 
         if 0 <= node.x - 1 < self.cols:
             nodes.append(self.board[node.y][node.x - 1])
-
-    def reset(self):
-        for i in range(self.rows):
-            for j in range(self.cols):
-                n = self.board[i][j]
-                n.reset()
