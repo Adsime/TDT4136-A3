@@ -68,9 +68,6 @@ class Node(Canvas):
             return 0
         else:
             self.update_values(parent, goal)
-            # This check will often reduce number of iterations needed to find the optimal route.
-            if self.heuristic == 1:
-                return 2
             return 1
 
     def update_values(self, parent, goal):
@@ -81,7 +78,9 @@ class Node(Canvas):
         self.parent = parent
         self.opened = True
         self.f_score = self.currentG + self.heuristic
-        self.config(bg="yellow")
+        if not self.isStart and not self.isGoal:
+
+            self.config(bg="yellow")
 
     def check_if_better(self, node):
         calc = node.currentG + self.baseG
@@ -95,6 +94,7 @@ class Node(Canvas):
 
     def reset(self):
         self.config(bg=self.COLORS.get(self.char).color)
+        pass
 
     def backtrack(self):
         dx = ((1/4)*self.WIDTH) + 3
@@ -104,6 +104,7 @@ class Node(Canvas):
             self.parent.backtrack()
 
     def close(self):
-        self.config(bg="light gray")
+        if not self.isStart and not self.isGoal:
+            self.config(bg="light gray")
 
 

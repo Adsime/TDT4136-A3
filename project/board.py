@@ -1,9 +1,10 @@
 from tkinter import *
 from project.node import Node
-from random import randint
 
 
 class Board:
+
+    style = -1
 
     def __init__(self, file_name):
 
@@ -58,14 +59,14 @@ class Board:
             for child in nodes:
                 if child and isinstance(child, Node):
                     action = child.open(node, self.goal_node)
-                    if action == 2:
-                        self.open_neighbours(child, engine)
-                        return
                     if action == 1:
                         if child.isGoal:
                             engine.finish(child)
                             return
-                        engine.open.append(child)
+                        if Board.style == 1:
+                            engine.open.append(child)
+                        elif Board.style == 2:
+                            engine.open.insert(0, child)
 
     def check_neighbours(self, node, nodes):
         if 0 <= node.y + 1 < self.rows:

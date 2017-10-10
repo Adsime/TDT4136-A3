@@ -37,7 +37,8 @@ class AStar:
         node = self.open.pop()
         node.close()    # Visual change to get an indication of which nodes are considered "closed"
         self.board.open_neighbours(node, self)
-        self.open.sort(key=lambda n: n.f_score, reverse=True)
+        if Board.style == 1:
+            self.open.sort(key=lambda n: n.f_score, reverse=True)  #Remove comment for A*, comment for BFS and Dijkstra
 
     def finish(self, node):
         """
