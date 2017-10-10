@@ -42,12 +42,11 @@ class AStar:
 
     def finish(self, node):
         """
-        Called when the optimal path is found. The board is firstly reset,
-        then the nodes initiates a backtrack to reveal the optimal path,
+        Called when the optimal path is found.
+        The nodes initiates a backtrack to reveal the optimal path,
         lastly the finished value is set to true.
         :param node:
         """
-        self.board.reset()
         node.backtrack()
         self.finished = True
         print(self.iter)

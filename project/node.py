@@ -4,6 +4,11 @@ from tkinter import Canvas
 class SymbolValues:
 
     def __init__(self, color, g_score):
+        """
+        Used to store values for easy referral in maps.
+        :param color:
+        :param g_score:
+        """
         self.color = color
         self.g_score = g_score
 
@@ -50,46 +55,65 @@ class Node(Canvas):
         self.isStart = char == self.START
         self.isWall = char == self.WALL
         self.opened = False
+        self.text = None
 
         # Place the Canvas in the Grid.
         self.grid(column=x, row=y)
 
     def open(self, parent, goal):
         """
-
+        Returns an int to indicate what was done.
+        If the node is a wall, just return.
+        If the node is already opened, a check is made to see if the suggested
+        parent is a better alternative.
+        Otherwise, object values are updated.
+        A check is made to see if the node is next to the goal. If it is, a value is returned indicating this.
         :param parent: Node
         :param goal: Node
         :return: int, indicating what action to do.
         """
-        if self.isWall:
+        if self.isWall:     # No actions are needed
             return 0
         elif self.opened:
-            self.check_if_better(parent)
+            self.check_if_better(parent)    # Make a test on the suggested parent
             return 0
         else:
             self.update_values(parent, goal)
             return 1
 
     def update_values(self, parent, goal):
+        """
+        Will update Node metadata and display a symbol on the Canvas to indicate that the node is opened.
+        :param parent: Node
+        :param goal: Node
+        """
         self.baseG = self.COLORS.get(self.char).g_score
-        if parent and goal:
+        if parent and goal:     # Avoiding errors when opening the start node
             self.calc_heuristic(goal)
             self.currentG = parent.currentG + self.baseG
         self.parent = parent
         self.opened = True
         self.f_score = self.currentG + self.heuristic
         if not self.isStart and not self.isGoal:
-
             self.config(bg="yellow")
+        self.text = self.create_text(self.WIDTH / 2, self.HEIGHT / 2, text="*", fill="black")
 
-    def check_if_better(self, node):
-        calc = node.currentG + self.baseG
+    def check_if_better(self, parent):
+        """
+        Checks if a suggested parent node is better suited to be parent than the current parent.
+        :param parent: Node
+        """
+        calc = parent.currentG + self.baseG
         if calc < self.currentG:
-            self.parent = node
+            self.parent = parent
             self.currentG = calc
             self.f_score = self.currentG + self.heuristic
 
     def calc_heuristic(self, goal_node):
+        """
+        Calculates the heuristic (Mannheim heuristic) for this Node.
+        :param goal_node: Node
+        """
         self.heuristic = abs(self.x - goal_node.x) + abs(self.y - goal_node.y)
 
     def reset(self):
@@ -97,8 +121,14 @@ class Node(Canvas):
         pass
 
     def backtrack(self):
-        dx = ((1/4)*self.WIDTH) + 3
-        dy = (3/4)*self.HEIGHT
+        """
+        Will draw a circle on the Canvas and delete the existing text on it.
+        Then it will call on the parent's backtrack method.
+        This is done to mark the optimal path
+        """
+        dx = ((1/5)*self.WIDTH) + 3
+        dy = (4/5)*self.HEIGHT
+        self.delete(self.text)
         self.create_oval(dx, dx, dy, dy, fill="dark blue")
         if self.parent is not None:
             self.parent.backtrack()
@@ -106,5 +136,10 @@ class Node(Canvas):
     def close(self):
         if not self.isStart and not self.isGoal:
             self.config(bg="light gray")
+        """
+        Helper method to "mark" the nodes as closed visually.
+        """
+        self.delete(self.text)
+        self.create_text(self.WIDTH/2, self.HEIGHT/2, text="X", fill="black")
 
 
