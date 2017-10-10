@@ -1,6 +1,5 @@
 from tkinter import Canvas
 
-
 class SymbolValues:
 
     def __init__(self, color, g_score):
@@ -18,9 +17,13 @@ class Node(Canvas):
     Class node, extends tkinter.Canvas
     """
 
+    A_STAR = "A*"
+    BFS = "BFS"
+    DIJKSTRA = "DIJKSTRA"
+
     # Globally unique fields
-    HEIGHT = 30
-    WIDTH = 30
+    HEIGHT = 20
+    WIDTH = 20
     COLORS = {"A": SymbolValues("dark orange", 0), "B": SymbolValues("gold", 0), '.': SymbolValues("white", 0),
               "#": SymbolValues("black", 0), "w": SymbolValues("blue", 100), "m": SymbolValues("gray", 50),
               "f": SymbolValues("dark green", 10), "g": SymbolValues("light green", 5), "r": SymbolValues("brown", 1)}
@@ -60,7 +63,7 @@ class Node(Canvas):
         # Place the Canvas in the Grid.
         self.grid(column=x, row=y)
 
-    def open(self, parent, goal):
+    def open(self, parent, goal, algorithm):
         """
         Returns an int to indicate what was done.
         If the node is a wall, just return.
@@ -70,6 +73,7 @@ class Node(Canvas):
         A check is made to see if the node is next to the goal. If it is, a value is returned indicating this.
         :param parent: Node
         :param goal: Node
+        :param algorithm: str
         :return: int, indicating what action to do.
         """
         if self.isWall:     # No actions are needed
@@ -78,24 +82,26 @@ class Node(Canvas):
             self.check_if_better(parent)    # Make a test on the suggested parent
             return 0
         else:
-            self.update_values(parent, goal)
+            self.update_values(parent, goal, algorithm)
             return 1
 
-    def update_values(self, parent, goal):
+    def update_values(self, parent, goal, algorithm):
         """
         Will update Node metadata and display a symbol on the Canvas to indicate that the node is opened.
         :param parent: Node
         :param goal: Node
+        :param algorithm: str
         """
         self.baseG = self.COLORS.get(self.char).g_score
         if parent and goal:     # Avoiding errors when opening the start node
-            self.calc_heuristic(goal)
+            if algorithm != self.DIJKSTRA:  # For Dijkstra
+                self.calc_heuristic(goal)
             self.currentG = parent.currentG + self.baseG
         self.parent = parent
         self.opened = True
         self.f_score = self.currentG + self.heuristic
-        if not self.isStart and not self.isGoal:
-            self.config(bg="yellow")
+        #if not self.isStart and not self.isGoal:
+            #self.config(bg="yellow")
         self.text = self.create_text(self.WIDTH / 2, self.HEIGHT / 2, text="*", fill="black")
 
     def check_if_better(self, parent):
@@ -116,11 +122,7 @@ class Node(Canvas):
         """
         self.heuristic = abs(self.x - goal_node.x) + abs(self.y - goal_node.y)
 
-    def reset(self):
-        self.config(bg=self.COLORS.get(self.char).color)
-        pass
-
-    def backtrack(self):
+    def backtrack(self, engine):
         """
         Will draw a circle on the Canvas and delete the existing text on it.
         Then it will call on the parent's backtrack method.
@@ -130,16 +132,17 @@ class Node(Canvas):
         dy = (4/5)*self.HEIGHT
         self.delete(self.text)
         self.create_oval(dx, dx, dy, dy, fill="dark blue")
+        engine.combined_g_value += self.baseG
         if self.parent is not None:
-            self.parent.backtrack()
+            self.parent.backtrack(engine)
 
     def close(self):
-        if not self.isStart and not self.isGoal:
-            self.config(bg="light gray")
         """
         Helper method to "mark" the nodes as closed visually.
         """
+        #if not self.isStart and not self.isGoal:
+            #self.config(bg="light gray")
         self.delete(self.text)
-        self.create_text(self.WIDTH/2, self.HEIGHT/2, text="X", fill="black")
+        self.text = self.create_text(self.WIDTH/2, self.HEIGHT/2, text="X", fill="black")
 
 
